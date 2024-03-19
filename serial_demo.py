@@ -14,21 +14,14 @@ uart.init(bits=8, parity=None, stop=1)
 ports.append(uart)
 
 # Create a CDC object and add it to the list
-cdc1 = CDC()
-cdc1.init(timeout=0)
-ports.append(cdc1)
-
-# # Create another CDC object and add it to the list
-# cdc2 = CDC()
-# cdc2.init(timeout=0)
-# ports.append(cdc2)
+cdc = CDC()
+cdc.init(timeout=0)
+ports.append(cdc)
+# Initialise the USB driver with the CDC object
+usbd.device.get().init(cdc, builtin_drivers=True)
 
 # Add the standard input to the list
 ports.append(sys.stdin)
-
-# Initialise the USB driver(?) with the CDC objects
-# usbd.device.get().init(cdc1, cdc2, builtin_drivers=True)
-usbd.device.get().init(cdc1, builtin_drivers=True)
 
 # Create a poll object and register all the ports
 io = select.poll()
@@ -39,7 +32,8 @@ led = Pin("LED", Pin.OUT)
 led.off()
 
 # Wait for the USB to be ready
-time.sleep(1)
+while not cdc.is_open():
+    time.sleep_ms(100)
 
 while True:
 	for stream, event in io.ipoll(0):
