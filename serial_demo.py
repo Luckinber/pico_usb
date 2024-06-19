@@ -1,8 +1,8 @@
+import usb.device
+from usb.device.cdc import CDCInterface
 from machine import Pin, UART
-from usbd import CDC
-import usbd.device
-import select
 import sys
+import select
 import time
 
 # Create a list of all the ports we want to poll
@@ -14,11 +14,11 @@ uart.init(bits=8, parity=None, stop=1)
 ports.append(uart)
 
 # Create a CDC object and add it to the list
-cdc = CDC()
+cdc = CDCInterface()
 cdc.init(timeout=0)
 ports.append(cdc)
 # Initialise the USB driver with the CDC object
-usbd.device.get().init(cdc, builtin_drivers=True)
+usb.device.get().init(cdc, builtin_driver=True)
 
 # Add the standard input to the list
 ports.append(sys.stdin)

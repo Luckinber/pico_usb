@@ -1,25 +1,25 @@
-from usbd import CDC
-import usbd.device
+import usb.device
+from usb.device.cdc import CDCInterface
 import select
 import time
- 
+
 ports = []
 num_ports = 6
 io = select.poll()
 
 # Create a list of CDC objects
 for i in range(num_ports):
-	cdc = CDC()
+	cdc = CDCInterface()
 	cdc.init(timeout=0)
 	io.register(cdc, select.POLLIN)
 	ports.append(cdc)
 
 # Initialise the USB device with the list of CDC objects
-usbd.device.get().init(*ports, builtin_drivers=True)
+usb.device.get().init(*ports, builtin_driver=True)
 
 # Wait for all ports to be opened
 while not all(port.is_open() for port in ports):
-    time.sleep_ms(100)
+	time.sleep_ms(100)
 
 while True:
 	# Poll for data on all ports
