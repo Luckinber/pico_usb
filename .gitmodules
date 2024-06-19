@@ -1,4 +1,0 @@
-[submodule "micropython-lib"]
-	path = micropython-lib
-	url = https://github.com/projectgus/micropython-lib
-	branch = feature/usbd_python
